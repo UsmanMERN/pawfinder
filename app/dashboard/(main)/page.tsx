@@ -1,3 +1,5 @@
+// app/dashboard/page.tsx - UPDATED CODE
+
 import { createClient } from "@/lib/supabase/server"
 import { redirect } from "next/navigation"
 import Link from "next/link"
@@ -14,10 +16,13 @@ export default async function DashboardPage() {
     redirect("/auth/login")
   }
 
-  const { data: profile } = await supabase.from("profiles").select("*").eq("id", user.id).single()
+  // Get profile data directly from the user's metadata.
+  // This completely replaces the query to the "profiles" table.
+  const profile = user.user_metadata
 
-  // Redirect if a user exists without a profile
-  if (!profile) {
+  // Redirect if a user exists without a profile or a user_type.
+  // This check is redundant if the DashboardLayout is active, but it's good practice.
+  if (!profile || !profile.user_type) {
     redirect("/auth/login")
   }
 
